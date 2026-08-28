@@ -5,7 +5,7 @@ Dự án FastAPI mini
 ## Các thành phần chính
 
 - **Mã nguồn ngắn gọn**: Toàn bộ logic nằm gọn trong `main.py` (~100 dòng code).
-- **Pydantic V2**: Sử dụng `@field_validator` và `@model_validator(mode='after')` (không dùng Pydantic V1).
+- **Pydantic V2**: Sử dụng `@field_validator` và `@model_validator(mode='after')` 
 - **SQLite Database**: Cơ sở dữ liệu SQLite bất đồng bộ (`sqlite+aiosqlite`).
 - **Dependency Injection**: Hàm `get_db()` cung cấp AsyncSession qua `Depends`.
 - **Lifespan Manager**: Quản lý vòng đời khởi tạo bảng và đóng engine (`@asynccontextmanager`).
