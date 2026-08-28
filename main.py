@@ -8,9 +8,8 @@ from sqlalchemy import String, Float, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-# -----------------------------------------------------------------------------
 # 1. DATABASE & ORM SETUP (Async SQLite)
-# -----------------------------------------------------------------------------
+
 DATABASE_URL = "sqlite+aiosqlite:///./app.db"
 
 engine = create_async_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -30,18 +29,16 @@ class ItemDB(Base):
     discount_price: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
 
-# -----------------------------------------------------------------------------
 # 2. DB DEPENDENCY INJECTION
-# -----------------------------------------------------------------------------
+
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Inject database session into route handlers."""
     async with AsyncSessionLocal() as session:
         yield session
 
 
-# -----------------------------------------------------------------------------
 # 3. PYDANTIC V2 MODELS & VALIDATORS
-# -----------------------------------------------------------------------------
+
 class ItemCreate(BaseModel):
     title: str = Field(..., min_length=1, description="Tên item")
     price: float = Field(..., description="Giá gốc")
@@ -84,9 +81,8 @@ class ItemResponse(ItemCreate):
     model_config = ConfigDict(from_attributes=True)
 
 
-# -----------------------------------------------------------------------------
 # 4. LIFESPAN MANAGEMENT
-# -----------------------------------------------------------------------------
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Quản lý khởi tạo bảng khi startup & đóng engine khi shutdown."""
@@ -100,9 +96,8 @@ async def lifespan(app: FastAPI):
     print("[Shutdown] DB engine disposed.")
 
 
-# -----------------------------------------------------------------------------
 # 5. FASTAPI APPLICATION SETUP & CORS
-# -----------------------------------------------------------------------------
+
 app = FastAPI(title="FastAPI Homework - Item API", lifespan=lifespan)
 
 app.add_middleware(
@@ -114,9 +109,8 @@ app.add_middleware(
 )
 
 
-# -----------------------------------------------------------------------------
 # 6. HEALTH ENDPOINTS
-# -----------------------------------------------------------------------------
+
 @app.get("/health/live", tags=["Health"])
 async def health_live():
     return {"status": "live"}
@@ -130,9 +124,8 @@ async def health_ready(db: AsyncSession = Depends(get_db)):
     return {"status": "ready", "database": "connected"}
 
 
-# -----------------------------------------------------------------------------
 # 7. CRUD ENDPOINTS
-# -----------------------------------------------------------------------------
+
 @app.post("/items", response_model=ItemResponse, status_code=status.HTTP_201_CREATED, tags=["Items"])
 async def create_item(item_in: ItemCreate, db: AsyncSession = Depends(get_db)):
     db_item = ItemDB(**item_in.model_dump())
