@@ -1,6 +1,6 @@
 # FastAPI Homework - Mini Item API
 
-Dự án FastAPI mini nhỏ gọn, ngắn gọn, đúng trọng tâm yêu cầu bài tập về nhà.
+Dự án FastAPI mini 
 
 ## Các thành phần chính
 
